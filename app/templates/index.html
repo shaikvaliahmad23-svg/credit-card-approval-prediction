@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ledger &mdash; Credit Card Approval Screening</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+</head>
+<body>
+  <div class="wrap">
+
+    <header class="masthead">
+      <div class="brand">
+        <div class="mark">L</div>
+        <div>
+          <h1>Ledger</h1>
+          <div class="sub">Credit Card Approval Screening</div>
+        </div>
+      </div>
+      <div class="stamp">Model on file: {{ model_name }}</div>
+    </header>
+
+    <div class="intro">
+      <h2>Applicant intake</h2>
+      <p>Enter the applicant's financial and demographic details below. The
+      model returns an instant approval or rejection decision, the same way
+      an underwriter would flag a file for review.</p>
+    </div>
+
+    <div class="layout">
+      <div class="ledger">
+        <div class="ledger-head">
+          <span>Application Record</span>
+          <span>Form 07&ndash;A</span>
+        </div>
+
+        <form action="/predict" method="post">
+
+          <div class="line-item">
+            <div class="line-num">01</div>
+            <div class="field field-row">
+              <div>
+                <label for="gender">Gender</label>
+                <select name="gender" id="gender">
+                  {% for opt in options["CODE_GENDER"] %}
+                  <option value="{{ opt }}">{{ opt }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+              <div>
+                <label for="age">Age (years)</label>
+                <input type="number" name="age" id="age" min="18" max="90" value="35" required />
+              </div>
+            </div>
+          </div>
+
+          <div class="line-item">
+            <div class="line-num">02</div>
+            <div class="field field-row">
+              <div>
+                <label for="family_status">Marital status</label>
+                <select name="family_status" id="family_status">
+                  {% for opt in options["NAME_FAMILY_STATUS"] %}
+                  <option value="{{ opt }}">{{ opt }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+              <div>
+                <label for="family_members">Family members</label>
+                <input type="number" name="family_members" id="family_members" min="1" max="12" value="2" required />
+              </div>
+            </div>
+          </div>
+
+          <div class="line-item">
+            <div class="line-num">03</div>
+            <div class="field field-row">
+              <div>
+                <label for="children">Number of children</label>
+                <input type="number" name="children" id="children" min="0" max="10" value="0" required />
+              </div>
+              <div>
+                <label for="education_type">Education level</label>
+                <select name="education_type" id="education_type">
+                  {% for opt in options["NAME_EDUCATION_TYPE"] %}
+                  <option value="{{ opt }}">{{ opt }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="line-item">
+            <div class="line-num">04</div>
+            <div class="field field-row">
+              <div>
+                <label for="income">Annual income (&#36;)</label>
+                <input type="number" name="income" id="income" min="0" step="1000" value="180000" required />
+              </div>
+              <div>
+                <label for="income_type">Income type</label>
+                <select name="income_type" id="income_type">
+                  {% for opt in options["NAME_INCOME_TYPE"] %}
+                  <option value="{{ opt }}">{{ opt }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="line-item">
+            <div class="line-num">05</div>
+            <div class="field field-row">
+              <div>
+                <label for="occupation_type">Occupation</label>
+                <select name="occupation_type" id="occupation_type">
+                  {% for opt in options["OCCUPATION_TYPE"] %}
+                  <option value="{{ opt }}">{{ opt }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+              <div>
+                <label for="years_employed">Years employed</label>
+                <input type="number" name="years_employed" id="years_employed" min="0" max="55" value="5" required />
+              </div>
+            </div>
+          </div>
+
+          <div class="line-item">
+            <div class="line-num">06</div>
+            <div class="field field-row">
+              <div>
+                <label for="housing_type">Housing type</label>
+                <select name="housing_type" id="housing_type">
+                  {% for opt in options["NAME_HOUSING_TYPE"] %}
+                  <option value="{{ opt }}">{{ opt }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+              <div>
+                <label>Assets on record</label>
+                <div class="checkbox-line">
+                  <input type="checkbox" name="own_car" id="own_car" value="Y" />
+                  <label for="own_car" style="margin:0;">Owns a car</label>
+                </div>
+                <div class="checkbox-line">
+                  <input type="checkbox" name="own_realty" id="own_realty" value="Y" checked />
+                  <label for="own_realty" style="margin:0;">Owns real estate</label>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="line-item">
+            <div class="line-num">07</div>
+            <div class="field field-row">
+              <div>
+                <label>Contact on file</label>
+                <div class="checkbox-line">
+                  <input type="checkbox" name="work_phone" id="work_phone" value="1" />
+                  <label for="work_phone" style="margin:0;">Work phone</label>
+                </div>
+                <div class="checkbox-line">
+                  <input type="checkbox" name="phone" id="phone" value="1" checked />
+                  <label for="phone" style="margin:0;">Personal phone</label>
+                </div>
+                <div class="checkbox-line">
+                  <input type="checkbox" name="email" id="email" value="1" checked />
+                  <label for="email" style="margin:0;">Email</label>
+                </div>
+              </div>
+              <div></div>
+            </div>
+          </div>
+
+          <div class="submit-row">
+            <button type="submit" class="submit">Run credit decision</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="footnote">Trained on historical applicant data &middot; Logistic Regression / Random Forest / XGBoost / Decision Tree</div>
+  </div>
+</body>
+</html>

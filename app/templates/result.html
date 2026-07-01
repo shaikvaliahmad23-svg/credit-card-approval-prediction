@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Decision &mdash; Ledger</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+</head>
+<body>
+  <div class="wrap">
+    <header class="masthead">
+      <div class="brand">
+        <div class="mark">L</div>
+        <div>
+          <h1>Ledger</h1>
+          <div class="sub">Credit Card Approval Screening</div>
+        </div>
+      </div>
+      {% if not error %}
+      <div class="stamp">Model on file: {{ model_name }}</div>
+      {% endif %}
+    </header>
+
+    <div class="decision-wrap">
+      {% if error %}
+        <div class="error-box">Couldn't complete the screening: {{ error }}</div>
+        <a href="/" class="back-link">Back to application</a>
+      {% else %}
+        <div class="dial">
+          <svg viewBox="0 0 220 220">
+            <circle cx="110" cy="110" r="94" fill="none" stroke="#2B4A38" stroke-width="14" />
+            <circle
+              cx="110" cy="110" r="94" fill="none"
+              stroke="{{ '#4E8B5C' if approved else '#C1502E' }}"
+              stroke-width="14"
+              stroke-linecap="round"
+              stroke-dasharray="{{ (confidence/100) * 590.6 }} 590.6"
+              transform="rotate(-90 110 110)"
+            />
+          </svg>
+          <div class="dial-center">
+            <div class="dial-pct">{{ confidence }}%</div>
+            <div class="dial-label">Confidence</div>
+          </div>
+        </div>
+
+        <div class="decision-tag {{ 'approved' if approved else 'rejected' }}">
+          {{ 'Approved' if approved else 'Rejected' }}
+        </div>
+        <div class="decision-sub">
+          {% if approved %}
+            Applicant profile matches historically low-risk approvals.
+          {% else %}
+            Applicant profile matches historically high-risk / past-due accounts.
+          {% endif %}
+        </div>
+
+        <a href="/" class="back-link">Screen another applicant</a>
+      {% endif %}
+    </div>
+
+    <div class="footnote">This is a demo model trained on synthetic data &middot; not a real credit decision</div>
+  </div>
+</body>
+</html>
