@@ -1,1 +1,1 @@
-web: gunicorn --chdir app app:app
+web: gunicorn --chdir app --bind 0.0.0.0: app:app
